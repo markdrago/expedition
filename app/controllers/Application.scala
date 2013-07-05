@@ -5,6 +5,7 @@ import models.{CrucibleWebServiceComponent, CrucibleComponent}
 import play.api.libs.iteratee.Enumeratee
 import play.api.libs.json._
 import play.api.mvc._
+import scala.language.reflectiveCalls
 
 trait ApplicationComponent extends Controller {
   this: CrucibleComponent =>

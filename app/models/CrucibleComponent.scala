@@ -7,7 +7,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.iteratee.{Enumeratee, Enumerator}
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import play.Logger
+import scala.language.reflectiveCalls
 
 trait CrucibleComponent {
   this: CrucibleWebServiceComponent =>
@@ -17,11 +17,11 @@ trait CrucibleComponent {
     implicit val readReviews: Reads[Seq[Review]] =
     (__ \ "detailedReviewData").read(
       seq(
-        (__ \ "permaId" \ "id").read[String] and
+        ((__ \ "permaId" \ "id").read[String] and
         (__ \ "author" \ "userName").read[String] and
         (__ \ "name").read[String] and
-        (__ \ "createDate").read[String]
-        tupled
+        (__ \ "createDate").read[String])
+        .tupled
       ).map {
         reviews => reviews.collect {
           case (id, author, name, creationDate) => Review(id, author, name, DateTime.parse(creationDate), 0)
