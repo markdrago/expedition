@@ -24,7 +24,7 @@ trait CrucibleComponent {
         tupled
       ).map {
         reviews => reviews.collect {
-          case (id, author, name, creationDate) => Review(id, author, name, DateTime.parse(creationDate), 3)
+          case (id, author, name, creationDate) => Review(id, author, name, DateTime.parse(creationDate), 0)
         }
       }
     )

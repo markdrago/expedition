@@ -8,7 +8,7 @@ object ApplicationBuild extends Build {
   val appVersion      = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
-    // Add your project dependencies here,
+    "org.mockito" % "mockito-core" % "1.9.5" % "test",
     jdbc,
     anorm
   )
