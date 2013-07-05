@@ -48,7 +48,6 @@ trait CrucibleComponent {
       )
 
     def getFileCountForReview: Enumeratee[Review, Review] = {
-      Logger.debug("ran this bit")
       Enumeratee.mapM { r =>
         crucibleWebService.reviewItemsForReview(r.id).map { resp =>
           val items = resp.json.as[Seq[ReviewItem]].toSet
