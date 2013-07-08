@@ -6,7 +6,6 @@ import play.api.Play
 import play.api.Play.current
 import scala.collection.JavaConversions._
 
-//TODO: add support for holidays
 object WorkHoursBetween {
   val weekendDays = {
     val option = Play.configuration.getIntList("application.weekend_days")
