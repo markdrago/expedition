@@ -1,4 +1,4 @@
-package service.hours
+package service
 
 import java.util
 import org.joda.time._
