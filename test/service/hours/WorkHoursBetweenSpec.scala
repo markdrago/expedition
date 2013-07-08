@@ -1,7 +1,7 @@
 package service.hours
 
+import org.joda.time.{Interval, LocalDate}
 import org.specs2.mutable._
-import org.joda.time.{Interval, LocalDate, Instant}
 
 class WorkHoursBetweenSpec extends Specification {
 

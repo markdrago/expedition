@@ -19,14 +19,11 @@ class WorkHoursBetween(start: Instant, end: Instant) {
 
   private[hours] def workHourIntervals: Stream[Interval] = weekdays.map(dayToWorkHourInterval)
 
-  //TODO: only convert to hours after accumulating integers of millis to avoid division weirdness
   private[hours] def workHours: Double = {
-    val total = new Interval(start, end)
-    workHourIntervals
-      .map(total.overlap(_))
-      .foldLeft[Double](0d)((acc: Double, inter: Interval) => {
-        acc + inter.toDuration.getMillis / WorkHoursBetween.millisPerHour
-      })
+    val entire_interval = new Interval(start, end)
+    val overlapping_intervals = workHourIntervals.map(entire_interval.overlap(_))
+    val total_millis = overlapping_intervals.foldLeft[Long](0)((acc, inter) => { acc + inter.toDuration.getMillis })
+    total_millis / WorkHoursBetween.millisPerHour
   }
 
   private[this] def dayToWorkHourInterval(d: LocalDate): Interval =
@@ -40,6 +37,7 @@ class WorkHoursBetween(start: Instant, end: Instant) {
 }
 
 object WorkHoursBetween {
+  //TODO move these constants in to the configuration rather than hard code them here
   val weekendDays = Set(DateTimeConstants.SATURDAY, DateTimeConstants.SUNDAY)
   val startTime = new LocalTime(10, 0)
   val endTime = new LocalTime(18, 0)
