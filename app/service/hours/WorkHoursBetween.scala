@@ -29,10 +29,10 @@ object WorkHoursBetween {
     def dayToWorkHourInterval(d: LocalDate) = new Interval(d.toDateTime(startTime), d.toDateTime(endTime))
     def workHourIntervals: Stream[Interval] = workdays.map(dayToWorkHourInterval)
 
-    val entire_interval = new Interval(start, end)
-    val overlapping_intervals = workHourIntervals.map(entire_interval.overlap(_))
-    val total_millis = overlapping_intervals.foldLeft[Long](0)((acc, inter) => { acc + inter.toDuration.getMillis })
-    total_millis / DateTimeConstants.MILLIS_PER_HOUR.toDouble
+    val entireInterval = new Interval(start, end)
+    val overlappingIntervals = workHourIntervals.map(entireInterval.overlap(_))
+    val totalMillis = overlappingIntervals.foldLeft[Long](0)((acc, inter) => { acc + inter.toDuration.getMillis })
+    totalMillis / DateTimeConstants.MILLIS_PER_HOUR.toDouble
   }
 
   def dayStream(start: Instant, end: Instant) = {
