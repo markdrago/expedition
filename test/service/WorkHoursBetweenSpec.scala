@@ -4,7 +4,6 @@ import org.specs2.mutable._
 import play.api.test.FakeApplication
 import play.api.test.Helpers._
 import scala.collection.JavaConversions._
-import service.WorkHoursBetween
 
 class WorkHoursBetweenSpec extends Specification {
 
