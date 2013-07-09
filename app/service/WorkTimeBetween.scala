@@ -5,7 +5,7 @@ import play.api.Play
 import play.api.Play.current
 import scala.collection.JavaConversions._
 
-object WorkHoursBetween {
+object WorkTimeBetween {
   val weekendDays =
     Play.configuration.getIntList("application.weekend_days")
       .map(_.toSet).getOrElse(Set.empty)
@@ -18,9 +18,9 @@ object WorkHoursBetween {
   val startTime = LocalTime.parse(Play.configuration.getString("application.start_time").getOrElse("09:00"))
   val endTime = LocalTime.parse(Play.configuration.getString("application.end_time").getOrElse("17:00"))
 
-  def apply(start: String, end: String): Double = apply(Instant.parse(start), Instant.parse(end))
+  def apply(start: String, end: String): Long = apply(Instant.parse(start), Instant.parse(end))
 
-  def apply(start: Instant, end: Instant): Double = {
+  def apply(start: Instant, end: Instant): Long = {
     def days: Stream[LocalDate] = dayStream(start, end)
     def isWeekday(d: LocalDate) = ! weekendDays.contains(d.dayOfWeek().get())
     def isNotHoliday(d: LocalDate) = ! holidays.contains(d)
@@ -31,7 +31,7 @@ object WorkHoursBetween {
     val entireInterval = new Interval(start, end)
     val overlappingIntervals = workHourIntervals.map(entireInterval.overlap(_))
     val totalMillis = overlappingIntervals.foldLeft[Long](0)((acc, inter) => { acc + inter.toDuration.getMillis })
-    totalMillis / DateTimeConstants.MILLIS_PER_HOUR.toDouble
+    totalMillis / DateTimeConstants.MILLIS_PER_MINUTE
   }
 
   def dayStream(start: Instant, end: Instant) = {
