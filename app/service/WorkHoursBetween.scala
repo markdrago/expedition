@@ -1,22 +1,22 @@
 package service
 
-import java.util
 import org.joda.time._
 import play.api.Play
 import play.api.Play.current
 import scala.collection.JavaConversions._
 
 object WorkHoursBetween {
-  val weekendDays = {
-    val option = Play.configuration.getIntList("application.weekend_days")
-    option.getOrElse(new util.LinkedList()).toSet
-  }
-  val holidays = {
-    val option = Play.configuration.getStringList("application.holidays")
-    option.getOrElse(new util.LinkedList()).toSet.map(LocalDate.parse)
-  }
-  val startTime = LocalTime.parse(Play.configuration.getString("application.start_time").get)
-  val endTime = LocalTime.parse(Play.configuration.getString("application.end_time").get)
+  val weekendDays =
+    Play.configuration.getIntList("application.weekend_days")
+      .map(_.toSet).getOrElse(Set.empty)
+
+  val holidays =
+    Play.configuration.getStringList("application.holidays")
+      .map(_.toSet).getOrElse(Set.empty)
+      .map(LocalDate.parse)
+
+  val startTime = LocalTime.parse(Play.configuration.getString("application.start_time").getOrElse("09:00"))
+  val endTime = LocalTime.parse(Play.configuration.getString("application.end_time").getOrElse("17:00"))
 
   def apply(start: String, end: String): Double = apply(Instant.parse(start), Instant.parse(end))
 
