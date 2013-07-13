@@ -8,20 +8,22 @@ import play.api.libs.iteratee.{Enumeratee, Enumerator}
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import scala.language.reflectiveCalls
+import com.google.inject.{Inject, Singleton}
 
-trait CrucibleComponent {
-  this: CrucibleWebServiceComponent =>
-  val crucible: Crucible
+trait Crucible {
+  def reviews(author: String): Enumerator[Review]
+}
 
-  class Crucible {
-    implicit val readReviews: Reads[Seq[Review]] =
+class CrucibleImpl @Inject()(crucibleWebService: CrucibleWebService) extends Crucible {
+
+  implicit val readReviews: Reads[Seq[Review]] =
     (__ \ "detailedReviewData").read(
       seq(
         ((__ \ "permaId" \ "id").read[String] and
-        (__ \ "author" \ "userName").read[String] and
-        (__ \ "name").read[String] and
-        (__ \ "createDate").read[String])
-        .tupled
+          (__ \ "author" \ "userName").read[String] and
+          (__ \ "name").read[String] and
+          (__ \ "createDate").read[String])
+          .tupled
       ).map {
         reviews => reviews.collect {
           case (id, author, name, creationDate) => Review(id, author, name, DateTime.parse(creationDate), 0)
@@ -29,34 +31,33 @@ trait CrucibleComponent {
       }
     )
 
-    implicit val readReviewItems: Reads[Seq[ReviewItem]] =
-      (__ \ "reviewItem").read(
-        seq(
-          (__ \ "permId" \ "id").read[String]
-        ).map {
-          items => items.collect {
-            case (id) => ReviewItem(id)
-          }
-        }
-      )
-
-    def getAllReviewsForAuthor(author: String): Enumerator[Review] =
-      Enumerator.flatten(
-        crucibleWebService.reviews(author).map { resp =>
-          Enumerator.enumerate(resp.json.as[Seq[Review]])
-        }
-      )
-
-    def getFileCountForReview: Enumeratee[Review, Review] = {
-      Enumeratee.mapM { r =>
-        crucibleWebService.reviewItemsForReview(r.id).map { resp =>
-          val items = resp.json.as[Seq[ReviewItem]].toSet
-          r.updateFileCount(items.size)
+  implicit val readReviewItems: Reads[Seq[ReviewItem]] =
+    (__ \ "reviewItem").read(
+      seq(
+        (__ \ "permId" \ "id").read[String]
+      ).map {
+        items => items.collect {
+          case (id) => ReviewItem(id)
         }
       }
-    }
+    )
 
-    def reviews(author: String): Enumerator[Review] =
-      (getAllReviewsForAuthor(author) &> getFileCountForReview) >>> Enumerator.eof
+  def getAllReviewsForAuthor(author: String): Enumerator[Review] =
+    Enumerator.flatten(
+      crucibleWebService.reviews(author).map { resp =>
+        Enumerator.enumerate(resp.json.as[Seq[Review]])
+      }
+    )
+
+  def getFileCountForReview: Enumeratee[Review, Review] = {
+    Enumeratee.mapM { r =>
+      crucibleWebService.reviewItemsForReview(r.id).map { resp =>
+        val items = resp.json.as[Seq[ReviewItem]].toSet
+        r.updateFileCount(items.size)
+      }
+    }
   }
+
+  def reviews(author: String): Enumerator[Review] =
+    (getAllReviewsForAuthor(author) &> getFileCountForReview) >>> Enumerator.eof
 }

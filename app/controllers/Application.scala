@@ -1,14 +1,14 @@
 package controllers
 
+import com.google.inject.Inject
 import domain.Review
-import models.{CrucibleWebServiceComponent, CrucibleComponent}
+import models.Crucible
 import play.api.libs.iteratee.Enumeratee
 import play.api.libs.json._
 import play.api.mvc._
 import scala.language.reflectiveCalls
 
-trait ApplicationComponent extends Controller {
-  this: CrucibleComponent =>
+class Application @Inject()(crucible: Crucible) extends Controller {
 
   implicit val reviewToJson = Json.writes[Review]
   val toJson = Enumeratee.map[Review](r => Json.toJson(r))
@@ -18,11 +18,4 @@ trait ApplicationComponent extends Controller {
   def reviews = Action {
     Ok.stream(crucible.reviews("mdrago") &> toJson)
   }
-}
-
-object Application extends ApplicationComponent
-                   with CrucibleComponent
-                   with CrucibleWebServiceComponent {
-  override val crucibleWebService = new CrucibleWebService()
-  override val crucible = new Crucible()
 }

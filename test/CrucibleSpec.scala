@@ -1,21 +1,24 @@
 import domain.Review
+import models.{CrucibleImpl, CrucibleWebService}
 import org.joda.time.{DateTimeZone, DateTime}
+import org.specs2.mock._
 import org.specs2.mutable._
 import org.specs2.specification.Scope
 import play.api.libs.iteratee.{Iteratee, Enumerator}
 import play.api.libs.json.Json
 import play.api.libs.ws.Response
+import play.mvc.Http.Status
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
-import test.TestApplication
 
-class CrucibleSpec extends Specification with TestApplication {
-  override val crucible = new Crucible()
+class CrucibleSpec extends Specification with Mockito {
 
   trait context extends Scope {
     val response = mock[Response]
-    response.status returns OK
+    response.status returns Status.OK
+    val crucibleWebService = mock[CrucibleWebService]
+    val crucible = new CrucibleImpl(crucibleWebService)
   }
 
   private def reviewUnpacker(enumerator: Enumerator[Review]): Set[Review] = {

@@ -8,9 +8,14 @@ object ApplicationBuild extends Build {
   val appVersion      = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
-    "org.mockito" % "mockito-core" % "1.9.5" % "test",
+    "com.typesafe.akka" %% "akka-actor" % "2.1.4",
+    "com.google.inject" % "guice" % "3.0",
+    "net.codingwell" %% "scala-guice" % "3.0.2",
     jdbc,
-    anorm
+    anorm,
+
+    "org.mockito" % "mockito-core" % "1.9.5" % "test",
+    "com.typesafe.akka" %% "akka-testkit" % "2.1.4" % "test"
   )
 
 
