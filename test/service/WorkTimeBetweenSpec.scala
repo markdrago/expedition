@@ -7,7 +7,7 @@ import scala.collection.JavaConversions._
 
 class WorkTimeBetweenSpec extends Specification {
 
-  private val fakeApp = FakeApplication(
+  private def fakeApp = FakeApplication(
     additionalConfiguration = Map(
       "application.start_time" -> "10:00",
       "application.end_time" -> "18:00",

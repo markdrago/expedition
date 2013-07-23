@@ -6,9 +6,19 @@ import models.Crucible
 import play.api.Logger
 
 class DistributingActor @Inject()(crucible: Crucible) extends Actor {
+
   def receive = {
-    case t:DistributingActor.Tick => Logger.debug("got tick")
+    case t:DistributingActor.Tick => tick
   }
+
+  def tick {
+    Logger.debug("got tick")
+    val reviews = crucible.reviews("mdrago") //TODO: remove individual author stuff from crucible
+  }
+  //on receive, make call to crucible
+  //pass data on to time splitter
+  //add split data to repository
+  //notify selection of actors that there is new data
 }
 
 object DistributingActor {
