@@ -10,18 +10,21 @@ import play.api.libs.iteratee.Enumerator
 import scala.concurrent.duration._
 import util.AkkaSpecs2Context
 
-class DistributingActorSpec extends Specification with NoTimeConversions with Mockito {
+class DistributingActorSpec extends Specification with NoTimeConversions {
 
-  "GatheringActor" should {
-    "gather the latest data from crucible" in new AkkaSpecs2Context {
+  private trait Fixture extends AkkaSpecs2Context with Mockito {
+    val crucible = mock[Crucible]
+    val underTest = TestActorRef(Props.create(classOf[DistributingActor], crucible))
+  }
+
+  "DistributingActor" should {
+    "gather the latest data from crucible" in new Fixture {
       within(1 second) {
-        val crucible = mock[Crucible]
-        crucible.reviews("mdrago") returns Enumerator.eof
+        crucible.reviews returns Enumerator.eof
 
-        val underTest = TestActorRef(Props.create(classOf[DistributingActor], crucible))
         underTest ! DistributingActor.Tick()
 
-        there was one(crucible).reviews("mdrago")
+        there was one(crucible).reviews
       }
     }
   }
