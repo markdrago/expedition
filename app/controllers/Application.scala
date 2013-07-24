@@ -16,6 +16,6 @@ class Application @Inject()(crucible: Crucible) extends Controller {
   def index = Action { Ok(views.html.index("message here")) }
 
   def reviews = Action {
-    Ok.stream(crucible.reviews("mdrago") &> toJson)
+    Ok.stream(crucible.reviews &> toJson)
   }
 }

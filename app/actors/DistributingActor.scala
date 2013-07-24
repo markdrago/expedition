@@ -13,7 +13,7 @@ class DistributingActor @Inject()(crucible: Crucible) extends Actor {
 
   def tick {
     Logger.debug("got tick")
-    val reviews = crucible.reviews("mdrago") //TODO: remove individual author stuff from crucible
+    val reviews = crucible.reviews
   }
   //on receive, make call to crucible
   //pass data on to time splitter

@@ -1,5 +1,6 @@
 package models
 
+import com.google.inject.Inject
 import domain.{ReviewItem, Review}
 import org.joda.time.DateTime
 import play.api.libs.concurrent.Execution.Implicits._
@@ -8,10 +9,9 @@ import play.api.libs.iteratee.{Enumeratee, Enumerator}
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import scala.language.reflectiveCalls
-import com.google.inject.{Inject, Singleton}
 
 trait Crucible {
-  def reviews(author: String): Enumerator[Review]
+  def reviews: Enumerator[Review]
 }
 
 class CrucibleImpl @Inject()(crucibleWebService: CrucibleWebService) extends Crucible {
@@ -42,9 +42,9 @@ class CrucibleImpl @Inject()(crucibleWebService: CrucibleWebService) extends Cru
       }
     )
 
-  def getAllReviewsForAuthor(author: String): Enumerator[Review] =
+  def getAllReviews: Enumerator[Review] =
     Enumerator.flatten(
-      crucibleWebService.reviews(author).map { resp =>
+      crucibleWebService.reviews.map { resp =>
         Enumerator.enumerate(resp.json.as[Seq[Review]])
       }
     )
@@ -58,6 +58,5 @@ class CrucibleImpl @Inject()(crucibleWebService: CrucibleWebService) extends Cru
     }
   }
 
-  def reviews(author: String): Enumerator[Review] =
-    (getAllReviewsForAuthor(author) &> getFileCountForReview) >>> Enumerator.eof
+  def reviews: Enumerator[Review] = (getAllReviews &> getFileCountForReview) >>> Enumerator.eof
 }

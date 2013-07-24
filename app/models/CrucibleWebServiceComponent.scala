@@ -1,16 +1,16 @@
 package models
 
+import com.google.inject.Singleton
+import play.Logger
 import play.api.Play
 import play.api.Play.current
 import play.api.libs.ws.Response
 import play.api.libs.ws.WS
-import scala.concurrent.Future
-import play.Logger
 import play.api.libs.ws.WS.WSRequestHolder
-import com.google.inject.Singleton
+import scala.concurrent.Future
 
 trait CrucibleWebService{
-  def reviews(author: String): Future[Response]
+  def reviews: Future[Response]
   def reviewItemsForReview(id: String): Future[Response]
 }
 
@@ -36,8 +36,8 @@ class CrucibleWebServiceImpl extends CrucibleWebService {
       case nonEmpty => "?" + nonEmpty
     }
 
-  def reviews(author: String): Future[Response] =
-    createUrl("/rest-service/reviews-v1/filter/details", Map("author" -> author)).get()
+  def reviews: Future[Response] =
+    createUrl("/rest-service/reviews-v1/filter/details").get()
 
   def reviewItemsForReview(id: String): Future[Response] =
     createUrl(s"/rest-service/reviews-v1/$id/reviewitems").get()

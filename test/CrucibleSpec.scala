@@ -27,18 +27,18 @@ class CrucibleSpec extends Specification with Mockito {
     Await.result(reviewsFuture, Duration(500, MILLISECONDS))
   }
 
-  "Crucible.getAllReviewsForAuthor" should {
+  "Crucible.getAllReviews" should {
     "correctly parse the response from crucible in to a List of Reviews" in new context {
       //setup mock results
       response.json returns reviewsJsonResult
-      crucibleWebService.reviews("author") returns Future(response)
+      crucibleWebService.reviews returns Future(response)
 
       //prepare expected value
       val expectedDate = new DateTime(2013, 7, 4, 8, 0, 0, 0, DateTimeZone.forOffsetHours(-5))
       val expected = Review("ABC-123", "author", "review name here", expectedDate, 0)
 
       //call method under test and get back enumerator
-      val enumerator = crucible.getAllReviewsForAuthor("author")
+      val enumerator = crucible.getAllReviews
 
       //validate
       reviewUnpacker(enumerator) should equalTo (Set(expected))
