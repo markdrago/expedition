@@ -17,45 +17,45 @@ class WorkTimeBetweenSpec extends Specification {
   )
 
   "WorkTimeBetween" should {
-    "return the correct number of minutes for single day all within workday" in {
+    "return the correct number of seconds for single day all within workday" in {
       running(fakeApp) {
-        val minutes = WorkTimeBetween("2013-07-08T11:00:00", "2013-07-08T12:00:00")
-        minutes should equalTo(60)
+        val seconds = WorkTimeBetween("2013-07-08T11:00:00", "2013-07-08T12:00:00")
+        seconds should equalTo(60 * 60)
       }
     }
 
-    "return the correct number of minutes when interval starts before workday" in {
+    "return the correct number of seconds when interval starts before workday" in {
       running(fakeApp) {
-        val minutes = WorkTimeBetween("2013-07-08T09:00:00", "2013-07-08T12:00:00")
-        minutes should equalTo(120)
+        val seconds = WorkTimeBetween("2013-07-08T09:00:00", "2013-07-08T12:00:00")
+        seconds should equalTo(120 * 60)
       }
     }
 
-    "return the correct number of minutes when interval ends after workday" in {
+    "return the correct number of seconds when interval ends after workday" in {
       running(fakeApp) {
-        val minutes = WorkTimeBetween("2013-07-08T15:00:00", "2013-07-08T20:00:00")
-        minutes should equalTo(180)
+        val seconds = WorkTimeBetween("2013-07-08T15:00:00", "2013-07-08T20:00:00")
+        seconds should equalTo(180 * 60)
       }
     }
 
-    "return the correct number of minutes when spanning multiple days" in {
+    "return the correct number of seconds when spanning multiple days" in {
       running(fakeApp) {
-        val minutes = WorkTimeBetween("2013-07-08T15:00:00", "2013-07-09T12:30:00")
-        minutes should equalTo(330)
+        val seconds = WorkTimeBetween("2013-07-08T15:00:00", "2013-07-09T12:30:00")
+        seconds should equalTo(330 * 60)
       }
     }
 
-    "return the correct number of minutes when spanning a weekend" in {
+    "return the correct number of seconds when spanning a weekend" in {
       running(fakeApp) {
-        val minutes = WorkTimeBetween("2013-07-12T15:00:00", "2013-07-15T11:30:00")
-        minutes should equalTo(270)
+        val seconds = WorkTimeBetween("2013-07-12T15:00:00", "2013-07-15T11:30:00")
+        seconds should equalTo(270 * 60)
       }
     }
 
-    "return the correct number of minutes when spanning a holiday" in {
+    "return the correct number of seconds when spanning a holiday" in {
       running(fakeApp) {
-        val minutes = WorkTimeBetween("2013-07-03T15:00:00", "2013-07-05T11:30:00")
-        minutes should equalTo(270)
+        val seconds = WorkTimeBetween("2013-07-03T15:00:00", "2013-07-05T11:30:00")
+        seconds should equalTo(270 * 60)
       }
     }
   }

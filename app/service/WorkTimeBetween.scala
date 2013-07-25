@@ -31,7 +31,7 @@ object WorkTimeBetween {
     val entireInterval = new Interval(start, end)
     val overlappingIntervals = workHourIntervals.map(entireInterval.overlap(_))
     val totalMillis = overlappingIntervals.foldLeft[Long](0)((acc, inter) => { acc + inter.toDuration.getMillis })
-    totalMillis / DateTimeConstants.MILLIS_PER_MINUTE
+    totalMillis / DateTimeConstants.MILLIS_PER_SECOND
   }
 
   def dayStream(start: Instant, end: Instant) = {
